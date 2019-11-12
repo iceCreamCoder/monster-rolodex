@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { CardList } from './component/card-list/card-list.component';
 
 class App extends Component {
 
@@ -8,29 +8,37 @@ class App extends Component {
     super();
 
     this.state = {
-      greeting: 'Hello Jared'
-    }
+      monsters: [],
+      searchInput: ''
+    };
   }
 
-   buttonClick = () => {
-    this.setState({
-      greeting: 'Hello Jared, Expert React Developer'
-    })
+
+  componentDidMount() {
+    fetch(`https://jsonplaceholder.typicode.com/users`)
+    .then(response => response.json()
+    .then(users => this.setState({
+      monsters: users
+    })))
   }
- 
 
 
   render() {
+    const {monsters, searchInput} = this.state;
+    // const monsters = this.state.monsters // 
+
+    const filteredMonsters = monsters.filter(monster => monster.name.toLowerCase().includes(searchInput.toLowerCase()))
     return(
-      <div className="App-header">
-        <img src={logo} className="App-logo" />
-
-        <p>{this.state.greeting}</p>
-
-        <button onClick={this.buttonClick}>
-        Click Here to Change Text
-        </button>
-
+      <div className="App"> 
+      <input
+        onChange={event => this.setState({
+          searchInput: event.target.value
+        })}
+        className="pa2"
+        type="search"
+        placeholder="Search Monsters Here"
+        />
+        <CardList monsters={filteredMonsters}/>
       </div>
     )
   }
